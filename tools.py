@@ -1,22 +1,44 @@
+import os
 from agents import function_tool
+from tavily import TavilyClient
 
 @function_tool
 def web_search_scraper(topic: str) -> str:
     """
-    Simulates crawling the web for live market updates on a specific topic.
-    Returns unstructured web text data.
+    Crawls the live internet for up-to-date market updates, news, 
+    and business data regarding a specific topic string.
     """
-    topic_lower = topic.lower()
+    # Initialize the client using your secure environment variable
+    tavily_key = os.getenv("TAVILY_API_KEY")
+    if not tavily_key:
+        return "⚠️ Error: Missing TAVILY_API_KEY inside your .env configuration file."
     
-    if "ai" in topic_lower or "artificial intelligence" in topic_lower:
-        return """
-        [Source: TechCrunch 2026] Small Language Models (SLMs) are eating the enterprise market...
-        """
-    elif "ev" in topic_lower or "electric vehicle" in topic_lower:
-        return """
-        [Source: Reuters 2026] Solid-state battery production lines have hit 60% yield targets early. 
-        Automakers are pivoting marketing strategies toward 800-mile ranges. 
-        Traditional lithium-ion margins have shrunk by 14% globally.
-        """
-    else:
-        return f"[Source: General Web Search] Found steady consumer interest regarding {topic}, but increasing customer acquisition costs across the sector."
+    try:
+        client = TavilyClient(api_key=tavily_key)
+        
+        # Execute a raw contextual internet search optimized for LLMs
+        # include_answer=True tells the API to pre-synthesize a summary snippet
+        response = client.search(
+            query=topic, 
+            search_depth="advanced", 
+            max_results=3
+        )
+        
+        # Clean and compile the results into raw text blocks for your agent
+        raw_results = []
+        for result in response.get("results", []):
+            title = result.get("title", "No Title")
+            url = result.get("url", "No URL")
+            content = result.get("content", "")
+            raw_results.append(f"[Source: {title} | {url}]\n{content}\n")
+            
+        compiled_text = "\n".join(raw_results)
+        
+        # Fallback if the internet search yielded completely empty returns
+        if not compiled_text.strip():
+            return f"Search completed, but no relevant market data could be retrieved for '{topic}'."
+            
+        return compiled_text
+
+    except Exception as e:
+        return f"❌ Live Scraper Error: Failed to fetch online data due to: {str(e)}"

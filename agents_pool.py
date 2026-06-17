@@ -7,7 +7,7 @@ triage_output = "No data yet..."
 research_output = "No data yet..."
 analyst_output = "No data yet..."
 
-# 🟢 Wrap each logging function with the proper SDK decorator
+# Wrap each logging function with the proper SDK decorator
 @function_tool
 def update_triage_log(text: str) -> str:
     """Updates the master tracking system with the triage agent's routing decision layout."""
@@ -28,8 +28,6 @@ def update_analyst_log(text: str) -> str:
     global analyst_output
     analyst_output = text
     return "Analyst log storage updated successfully."
-
-# --- REMINDER: MAKE SURE YOUR HANDOFFS ARE STILL SET UP SO THEY RUN CHRONOLOGICALLY ---
 
 brief_writer_agent = Agent(
     name="brief_writer_agent",
