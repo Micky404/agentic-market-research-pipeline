@@ -10,10 +10,7 @@ def web_search_scraper(topic: str) -> str:
     
     if "ai" in topic_lower or "artificial intelligence" in topic_lower:
         return """
-        [Source: TechCrunch 2026] Small Language Models (SLMs) are eating the enterprise market. 
-        Companies are shifting budget away from monolithic 1-trillion parameter APIs toward 
-        on-premise 8B to 14B parameter models due to data privacy laws and token costs.
-        [Source: Gartner 2026] Agentic workflow deployments grew by 240% year-over-year.
+        [Source: TechCrunch 2026] Small Language Models (SLMs) are eating the enterprise market...
         """
     elif "ev" in topic_lower or "electric vehicle" in topic_lower:
         return """

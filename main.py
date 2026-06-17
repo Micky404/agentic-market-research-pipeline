@@ -13,7 +13,11 @@ async def run_research_pipeline(user_target: str):
     prompt = f"Please run a comprehensive market analysis report on the following industry sector: {user_target}"
     
     # Run the multi-agent orchestration
-    result = await Runner.run(starting_agent=triage_agent, input=prompt)
+    result = await Runner.run(
+        starting_agent=triage_agent, 
+        input=prompt,
+        max_turns=5 # Added safety cap to limit token usage!
+    )
     
     print("\n--- Pipeline Execution Completed ---\n")
     print(f"Last Agent Active: {result.last_agent.name if result.last_agent else 'Unknown'}\n")
