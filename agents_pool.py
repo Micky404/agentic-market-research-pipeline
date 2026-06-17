@@ -1,52 +1,65 @@
-from agents import Agent
+# agents_pool.py
+from agents import Agent, function_tool  # 💡 Added function_tool import
 from tools import web_search_scraper
 
-# 1. Brief Writer Agent (The final output specialist)
+# Global storage variables (Gradio reads these)
+triage_output = "No data yet..."
+research_output = "No data yet..."
+analyst_output = "No data yet..."
+
+# 🟢 Wrap each logging function with the proper SDK decorator
+@function_tool
+def update_triage_log(text: str) -> str:
+    """Updates the master tracking system with the triage agent's routing decision layout."""
+    global triage_output
+    triage_output = text
+    return "Triage log storage updated successfully."
+
+@function_tool
+def update_research_log(text: str) -> str:
+    """Saves the raw text blocks and scraped intelligence datasets into the master tracking system."""
+    global research_output
+    research_output = text
+    return "Research log storage updated successfully."
+
+@function_tool
+def update_analyst_log(text: str) -> str:
+    """Logs the extracted macro market shifts and key signals into the master tracking system."""
+    global analyst_output
+    analyst_output = text
+    return "Analyst log storage updated successfully."
+
+# --- REMINDER: MAKE SURE YOUR HANDOFFS ARE STILL SET UP SO THEY RUN CHRONOLOGICALLY ---
+
 brief_writer_agent = Agent(
-    name="Brief_Writer_Agent",
-    handoff_description="Specialist in formatting insights into a professional markdown executive summary.",
-    instructions=(
-        "You are an expert technical corporate writer. Take the trends provided by the analyst "
-        "and draft a pristine, professional Markdown Market Research Brief. Organize it with "
-        "Clear Headers, Executive Summaries, and actionable strategic takeaways."
-    ),
+    name="brief_writer_agent",
+    handoff_description="Specialist in formatting insights into markdown summaries.",
+    instructions="Format the analyst findings into a pristine Markdown Market Research Brief.",
     model="gpt-4o"
 )
 
-# 2. Trend Analyst Agent
 trend_analyst_agent = Agent(
-    name="Trend_Analyst_Agent",
-    handoff_description="Specialist in processing raw text data to extract macroeconomic trends and shifts.",
-    instructions=(
-        "You are an elite Market Strategist. Analyze the raw data provided by the Web Research Agent. "
-        "Identify the top macro trends, note counter-signals, and handoff your structured findings "
-        "to the Brief Writer Agent to finalize the document."
-    ),
+    name="trend_analyst_agent",
+    handoff_description="Specialist in extracting trends from raw text data.",
+    instructions="Identify the top macro trends. Call update_analyst_log with your findings, then handoff to brief_writer_agent.",
+    tools=[update_analyst_log],
     handoffs=[brief_writer_agent],
-    model="gpt-4o"
+    model="gpt-5.4-mini"
 )
 
-# 3. Web Researcher Agent
 web_researcher_agent = Agent(
-    name="Web_Researcher_Agent",
-    handoff_description="Specialist in using tools to scrape the internet for recent data.",
-    instructions=(
-        "You are a web parsing agent. Use the `web_search_scraper` tool to gather raw data on the target industry. "
-        "Do not try to analyze the trends yourself. Once you gather the text, immediately handoff the execution "
-        "to the Trend Analyst Agent."
-    ),
-    tools=[web_search_scraper],
+    name="web_researcher_agent",
+    handoff_description="Specialist in scraping the internet.",
+    instructions="Use web_search_scraper to gather raw text. Call update_research_log to save it, then handoff to trend_analyst_agent.",
+    tools=[web_search_scraper, update_research_log],
     handoffs=[trend_analyst_agent],
-    model="gpt-4o"
+    model="gpt-5.4-mini"
 )
 
-# 4. Triage / Router Agent (The Entry Point)
 triage_agent = Agent(
-    name="Triage_Agent",
-    instructions=(
-        "You are the orchestrator. Determine what industry or topic the user wants to research, "
-        "and immediately route/handoff the task to the Web Researcher Agent to begin the workflow."
-    ),
+    name="triage_agent",
+    instructions="Determine user intent. Call update_triage_log to document your thoughts, then handoff to web_researcher_agent.",
+    tools=[update_triage_log],
     handoffs=[web_researcher_agent],
-    model="gpt-4o"
+    model="gpt-5.4-mini"
 )
