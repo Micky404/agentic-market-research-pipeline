@@ -1,6 +1,6 @@
 # agents_pool.py
 from agents import Agent
-from tools import web_search_scraper
+from tool import web_search_scraper
 
 # 1. Brief Writer Agent (The final output specialist)
 brief_writer_agent = Agent(
