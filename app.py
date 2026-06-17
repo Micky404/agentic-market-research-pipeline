@@ -43,12 +43,12 @@ async def analyze_market(target_sector: str):
 # Custom HTML styling header to grab recruiter attention
 header_html = """
 <div style="text-align: center; max-width: 800px; margin: 0 auto; padding-top: 20px;">
-    <h1 style="color: #2D3748; font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem;">
+    <h1 style="color: #c2cbd9; font-size: 2.2rem; font-weight: 700; margin-bottom: 0.5rem;">
         🏢 Multi-Agent Market Intelligence Hub
     </h1>
-    <p style="color: #718096; font-size: 1.1rem;">
-        Powered by OpenAI Agents SDK. Built with a specialized chain of 4 collaborative agents: 
-        <strong>Triage Orchestrator ➔ Web Scraper ➔ Trend Analyst ➔ Executive Writer</strong>.
+    <p style="color: #c2cbd9; font-size: 1.1rem;">
+        Engineered by Mickaël PRECIGOUT. <br />
+        <strong>4 collaborative agents: Triage Orchestrator ➔ Web Scraper ➔ Trend Analyst ➔ Executive Writer</strong>.
     </p>
 </div>
 """
