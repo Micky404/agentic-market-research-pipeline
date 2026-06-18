@@ -1,5 +1,4 @@
-# agents_pool.py
-from agents import Agent, function_tool  # 💡 Added function_tool import
+from agents import Agent, function_tool
 from tools import web_search_scraper
 
 # Global storage variables (Gradio reads these)

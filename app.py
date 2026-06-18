@@ -2,14 +2,11 @@ import asyncio
 import gradio as gr
 from dotenv import load_dotenv
 from agents import Runner
-# 1. MODIFICATION: Import the tracking variables from your pool
 import agents_pool
 from agents_pool import triage_agent
 
-# Local fallback config for testing, won't conflict with Cloud setup
 load_dotenv()
 
-# 2. MODIFICATION: Removed -> str because we are now returning multiple pieces of text
 async def analyze_market(target_sector: str):
     """
     Trigger function bound directly to the web interface submit button.
@@ -29,7 +26,7 @@ async def analyze_market(target_sector: str):
             max_turns=12
         )
         
-        # 3. MODIFICATION: Pull the captured data straight out of the pool variables!
+        # Pull the captured data straight out of the pool variables!
         return (
             result.final_output, 
             agents_pool.triage_output, 
@@ -73,7 +70,7 @@ with gr.Blocks() as demo:
             * Outputs are fully structured markdown documents ready for executive distribution.
             """)
             
-            # 4. MODIFICATION: Added clean visual display blocks for each agent log
+            # Clean visual display blocks for each agent log
             gr.Markdown("### 📋 Individual Agent Workspace Outputs")
             triage_display = gr.Textbox(label="1. Triage Agent Log", placeholder="Waiting...")
             research_display = gr.Textbox(label="2. Web Researcher Log", placeholder="Waiting...")
@@ -85,7 +82,7 @@ with gr.Blocks() as demo:
                 value="*The compiled analyst document output will display here ONCE execution completes.*"
             )
             
-    # 5. MODIFICATION: Map the button to output to all 4 UI boxes seamlessly
+    # Map the button to output to all 4 UI boxes seamlessly
     submit_btn.click(
         fn=analyze_market,
         inputs=input_box,
